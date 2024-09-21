@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="js/echarts.js"></script>
+    <script type="text/javascript" src="js/beijing.js"></script>
+    <script type="text/javascript" src="js/echarts-wordclouds.js"></script>
+
+    <style>
+        .buju{
+            text-align: center;
+            display: flex;
+        }
+        .chart-container {
+            width: 400px;
+            height: 400px;
+            float: left;
+            box-sizing: border-box;
+            padding: 10px;
+
+        }
+        .chart-container1 {
+            width: 800px;
+            height: 800px;
+            float: left;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .chart-container2 {
+            width: 800px;
+            height: 400px;
+            float: left;
+            box-sizing: border-box;
+            padding: 10px;
+
+        }
+        .container{
+            margin-top:40px;
+            display: flex;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+<h1>北京二手房可视化界面</h1>
+<div class="buju">
+
+    <div class="container">
+        <div>
+            <div id="main1" class="chart-container1"></div>
+        </div>
+        <div>
+            <div id="main" class="chart-container"></div>
+            <div id="main2" class="chart-container"></div>
+            <div id="main3" class="chart-container2"></div>
+
+        </div>
+        <div>
+            <div id="main4" class="chart-container"></div>
+            <div id="main5" class="chart-container"></div>
+        </div>
+    </div>
+</div>
+
+
+<!--房价区间-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '北京二手房价区间',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left'
+        },
+        series: [
+            {
+                name: '房价',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: 1482, name: '0-200' },
+                    { value: 3288, name: '200-400' },
+                    { value: 1881, name: '400-600' },
+                    { value: 986, name: '600-800' },
+                    { value: 863, name: '800-~' }
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+<!--北京地图-->
+<script type="text/javascript">
+    function randomData() {
+        return Math.round(Math.random() * 500);
+    }
+
+    var mydata = [
+        {name: '东城区', value: '5256'},
+        {name: '西城区', value: '7576'},
+        {name: '朝阳区', value: '34008'},
+        {name: '丰台区', value: '16314'},
+        {name: '石景山区', value: '3594'},
+        {name: '海淀区', value: '15271'},
+        {name: '门头沟区', value: '1882'},
+        {name: '房山区', value: '8953'},
+        {name: '通州区', value: '9630'},
+        {name: '顺义区', value: '7362'},
+        {name: '昌平区', value: '10555'},
+        {name: '大兴区', value: '11767'},
+        {name: '怀柔区', value: '1854'},
+        {name: '平谷区', value: '70'},
+        {name: '密云区', value: '4295'},
+        {name: '延庆区', value: '122'},
+
+    ]
+
+
+    var option_map = {
+        title: {
+            text: '北京二手房价数量地图',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                if (params.name) {
+                    var value = params.value || 0;
+                    return typeof value !== 'object' ? params.name + '<br>' + "提示 : " + value : params.name;
+                }
+            }
+        },
+        visualMap: {
+            type: 'continuous',
+            show: false,
+            min: 0,
+            max: 35000,
+            left: 'left',
+            top: 'bottom',
+            text: ['高', '低'],
+            calculable: true,
+            // seriesIndex: [1],
+            inRange: {
+                color: ['#FFFFFF', '#0099FF']
+            }
+        },
+        geo: {
+            map: '北京',
+            roam: false
+        },
+        series: [{
+            type: 'map',
+            mapType: '北京',
+            roam: false,
+            label: {
+                normal: {
+                    show: true,
+                    position: 'inside',
+                    textStyle: {
+                        color: '#000000'
+                    }
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            itemStyle: {
+                normal: {
+                    borderColor: 'transparent',
+                }
+            },
+            data: mydata
+        }]
+    };
+    var myChart = echarts.init(document.getElementById('main1'));
+    //使用制定的配置项和数据显示图表
+    myChart.setOption(option_map);
+    myChart.on('click', function (params) {
+        // 通过点击事件下钻到下级
+        console.log(params)
+    })
+    //});
+</script>
+<!--房价平均房价排序-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main2'));
+    // 指定图表的配置项和数据
+    var option = {
+
+        title: {
+            text: '房价前七排名',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: ['西城', '东城', '海淀', '朝阳', '亦庄开发区', '丰台', '石景山'],
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                name: '每平方米价格',
+                type: 'bar',
+                barWidth: '60%',
+                data: [119195, 104422,92353,64394, 56325, 55582, 49440]
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+<!--电梯比例折线图-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main3'));
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '各区电梯比例',
+            left: 'center'
+        },
+        xAxis: {
+            type: 'category',
+            data: ['东城', '丰台', '亦庄开发区', '大兴', '密云', '平谷', '延庆','怀柔','房山','昌平','朝阳','海淀','石景山','西城','通州','门头沟','顺义']
+
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data: [	0.57, 0.65, 0.72, 0.65,0.34,0.66,0.4,0.18,0.66,0.5,0.67,0.58,0.55,0.52,0.69,0.48,0.58],
+                type: 'line',
+                symbol: 'triangle',
+                symbolSize: 20,
+                lineStyle: {
+                    color: '#5470C6',
+                    width: 4,
+                    type: 'dashed'
+                },
+                itemStyle: {
+                    borderWidth: 3,
+                    borderColor: '#EE6666',
+                    color: 'yellow'
+                }
+            }
+        ]
+
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+<!--词云图-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main4'));
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '户型热点分析',
+            left: 'center'
+        },
+        tooltip: {
+            show: true
+        },
+        series: [{
+            name: '热点分析',
+            type: 'wordCloud',
+            //size: ['9%', '99%'],
+            sizeRange: [6, 66],
+            //textRotation: [0, 45, 90, -45],
+            rotationRange: [-45, 90],
+            //shape: 'circle',
+            textPadding: 0,
+            autoSize: {
+                enable: true,
+                minSize: 6
+            },
+            textStyle: {
+                normal: {
+                    color: function() {
+                        return 'rgb(' + [
+                            Math.round(Math.random() * 1600),
+                            Math.round(Math.random() * 1600),
+                            Math.round(Math.random() * 1600)
+                        ].join(',') + ')';
+                    }
+                },
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                }
+            },
+            data: [{
+                name: "Jayfee",
+                value: 666
+            }, {
+                name: "Nancy",
+                value: 520
+            }]
+        }]
+    };
+
+    var JosnList = [];
+
+    JosnList.push({
+        name: "2室1厅",
+        value: 4085
+    }, {
+        name: "3室1厅",
+        value: 1304
+    }, {
+        name: "1室1厅",
+        value: 1163
+    }, {
+        name: "3室2厅",
+        value: 859
+    }, {
+        name: "2室2厅",
+        value: 596
+    }, {
+        name: "1室0厅",
+        value: 172
+    }, {
+        name: "4室2厅",
+        value: 151
+    }, {
+        name: "4室1厅",
+        value: 59
+    }, {
+        name: "5室2厅",
+        value: 22
+    }, {
+        name: "1室2厅",
+        value: 15
+    }, {
+        name: "5室3厅",
+        value: 12
+    }, {
+        name: "4室3厅",
+        value: 11
+    }, {
+        name: "3室0厅",
+        value: 8
+    }, {
+        name: "5室1厅",
+        value: 7
+    }, {
+        name: "6室2厅",
+        value: 4
+    }, {
+        name: "7室2厅",
+        value: 3
+    }, {
+        name: "4室4厅",
+        value: 2
+    }, {
+        name: "9室7厅",
+        value: 1
+    });
+
+    option.series[0].data = JosnList;
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+</script>
+<!--房价区间-->
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main5'));
+    var dataname = ['平层/毛坯', '错层/精装', '错层/简装', '复式/毛坯', '跃层/毛坯', '暂无数据/毛坯', '复式/其他', '错层/其他', '平层/其他', '平层/精装', '平层/简装','暂无数据/简装','错层/毛坯','暂无数据/精装','跃层/精装','复式/简装','暂无数据/其他','跃层/简装','复式/精装']
+    var datvalue = [0.0168,0.0023,0.002,0.0016,2.35E-4,2.35E-4,0.0028,5.88E-4,0.0889,0.4718,0.3857,0.0013,1.17E-4,0.0021,0.0021,0.0046,0.0016,9.41E-4,0.019]
+    var color = ['#4B96F3', '#10C6A6', '#F2AF4B', '#FF4D4F', '#AA7AF1'];
+    var colorList = [];
+    for (var i = 0; i < dataname.length; i++) {
+        if (i <= 4) {
+            colorList[i] = color[i]
+        } else {
+            colorList[i] = color[i % 5]
+        }
+    }
+
+    var data = []
+    for (var i = 0; i < dataname.length; i++) {
+        data.push({
+            value: datvalue[i],
+            name: dataname[i],
+            itemStyle: {
+                color: colorList[i]
+            }
+        })
+    }
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '装修状况树形图',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{b}: {c}"
+        },
+        series: [{
+            type: 'treemap',
+            width: '100%',
+            height: '100%',
+            breadcrumb: {
+                show: false
+            },
+            label: {
+                normal: {
+                    show: true,
+                    textStyle: {
+                        color: '#fff',
+                        fontSize: 16,
+                    },
+                }
+            },
+            itemStyle: {
+                normal: {
+                    show: true,
+                    borderWidth: 1,
+                    borderColor: '#fff',
+                },
+                emphasis: {
+                    label: {
+                        show: true
+                    }
+                }
+            },
+            data: data
+        }]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+
+
+
+</body>
+</html>
